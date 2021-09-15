@@ -1,0 +1,22 @@
+{
+  "name": "itkfm/geras-sdk",
+  "description": "SDK for integrating GERAS auth into applications",
+  "license": "proprietary",
+  "authors": [
+    {
+      "name": "Elias Batek"
+    }
+  ],
+  "autoload": {
+    "psr-4": {
+      "ITKFM\\Geras\\SDK\\": "src"
+    }
+  },
+  "require": {
+    "php": "^7.4",
+    "ext-json": "*",
+    "ext-sodium": "*",
+    "guzzlehttp/guzzle": "^7.0",
+    "opis/json-schema": "^2.1"
+  }
+}
