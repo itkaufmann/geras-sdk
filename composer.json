@@ -17,6 +17,6 @@
     "ext-json": "*",
     "ext-sodium": "*",
     "guzzlehttp/guzzle": "^7.0",
-    "opis/json-schema": "^2.1"
+    "netresearch/jsonmapper": "^4.0"
   }
 }
