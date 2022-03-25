@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace ITKFM\Geras\SDK\Client;
 
+use Exception;
 use ITKFM\Geras\SDK\Client\ApiClientInterface as ApiClient;
 use ITKFM\Geras\SDK\Entity\Group;
 use ITKFM\Geras\SDK\Entity\Ticket;
@@ -19,6 +20,12 @@ class GerasAPIClient
     {
         $this->client = $client;
         $this->messagePacker = $messagePacker;
+    }
+
+    private function getUnpacked(string $uri)
+    {
+        $data = $this->client->get($uri);
+        return $this->messagePacker->unpackData($data);
     }
 
     private function getUnpackedAs(string $uri, string $class)
@@ -37,6 +44,12 @@ class GerasAPIClient
     {
         $rsData = $this->client->post($uri, $this->messagePacker->packData($rqData));
         return $this->messagePacker->unpackDataAs($rsData, $rsClass);
+    }
+
+    private function postPacked(string $uri, $rqData)
+    {
+        $rsData = $this->client->post($uri, $this->messagePacker->packData($rqData));
+        return $this->messagePacker->unpackData($rsData);
     }
 
     // ----
@@ -80,18 +93,37 @@ class GerasAPIClient
         // TODO
     }
 
-    public function issueTicket(int $id): Group
+    public function issueTicket(): Group
     {
         return $this->postPackedUnpackAs('ticket', null, Ticket::class);
     }
 
-    public function sessionSetVar(string $sessionID, string $id, $value): void
+    public function sessionGetUser(string $ticketID): User
     {
-        // TODO
+        return $this->postPackedUnpackAs('ticket/' . $ticketID . '/user', null, User::class);
     }
 
-    public function sessionGetVar(string $sessionID, string $id)
+    public function sessionSetVar(string $ticketID, string $key, string $value): void
     {
-        // TODO
+        $result = $this->postPacked('ticket/' . urlencode($ticketID) . '/var/' . urlencode($key), $value);
+
+        if (!is_bool($result)) {
+            throw new Exception('Unexpected response from server: ' . json_encode($result));
+        }
+
+        if ($result !== true) {
+            throw new Exception('Failed to set session variable.');
+        }
+    }
+
+    public function sessionGetVar(string $ticketID, string $key): string
+    {
+        $result = $this->getUnpacked('ticket/' . urlencode($ticketID) . '/var/' . urlencode($key));
+
+        if (!is_string($result)) {
+            throw new Exception('Bad key/value pair');
+        }
+
+        return $result;
     }
 }

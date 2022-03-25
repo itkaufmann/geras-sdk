@@ -25,5 +25,3 @@ final class KeyPair
         return $this->secretKey;
     }
 }
-
-

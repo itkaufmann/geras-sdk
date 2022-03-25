@@ -39,8 +39,9 @@ final class SignatureHelper
     {
         $r = sodium_crypto_sign_open($othersMessage, $this->othersPublicKey);
 
-        if ($r === false)
+        if ($r === false) {
             throw new BadSignatureException($othersMessage);
+        }
 
         return $r;
     }

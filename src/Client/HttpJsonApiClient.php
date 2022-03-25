@@ -7,6 +7,8 @@ namespace ITKFM\Geras\SDK\Client;
 use GuzzleHttp\Client;
 use JsonMapper;
 
+// TODO: error handling
+
 class HttpJsonApiClient implements ApiClientInterface
 {
     private Client $http;
