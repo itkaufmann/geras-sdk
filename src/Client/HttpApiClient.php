@@ -5,9 +5,6 @@ declare(strict_types=1);
 namespace ITKFM\Geras\SDK\Client;
 
 use GuzzleHttp\Client;
-use GuzzleHttp\Exception\ClientException;
-
-// TODO: error handling
 
 class HttpApiClient implements ApiClientInterface
 {
