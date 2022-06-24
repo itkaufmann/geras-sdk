@@ -4,14 +4,13 @@ declare(strict_types=1);
 
 namespace ITKFM\Geras\SDK\Client;
 
-use Exception;
 use ITKFM\Geras\SDK\Client\ApiClientInterface as ApiClient;
 use ITKFM\Geras\SDK\Entity\Group;
-use ITKFM\Geras\SDK\Entity\Ticket;
+use ITKFM\Geras\SDK\Entity\SessionTicket;
 use ITKFM\Geras\SDK\Entity\User;
 use ITKFM\Geras\SDK\Message\MessagePacker;
 
-class GerasAPIClient
+class GerasClient
 {
     private ApiClient $client;
     private MessagePacker $messagePacker;
@@ -88,42 +87,20 @@ class GerasAPIClient
         return $this->getUnpackedAsArrayOf('users/' . $userID . 'groups', Group::class);
     }
 
-    public function isUserInGroup(int $userID, int $groupID): bool
-    {
-        // TODO
-    }
-
     public function issueTicket(): Group
     {
-        return $this->postPackedUnpackAs('ticket', null, Ticket::class);
+        return $this->postPackedUnpackAs('ticket', null, SessionTicket::class);
     }
 
-    public function sessionGetUser(string $ticketID): User
+    /**
+     * @throws UnauthorizedSessionException
+     */
+    public function sessionGetUser(string $sessionID): User
     {
-        return $this->postPackedUnpackAs('ticket/' . $ticketID . '/user', null, User::class);
-    }
-
-    public function sessionSetVar(string $ticketID, string $key, string $value): void
-    {
-        $result = $this->postPacked('ticket/' . urlencode($ticketID) . '/var/' . urlencode($key), $value);
-
-        if (!is_bool($result)) {
-            throw new Exception('Unexpected response from server: ' . json_encode($result));
+        try {
+            return $this->getUnpackedAs('session/' . $sessionID . '/user', User::class);
+        } catch (NotFoundException $ex) {
+            throw new UnauthorizedSessionException($sessionID);
         }
-
-        if ($result !== true) {
-            throw new Exception('Failed to set session variable.');
-        }
-    }
-
-    public function sessionGetVar(string $ticketID, string $key): string
-    {
-        $result = $this->getUnpacked('ticket/' . urlencode($ticketID) . '/var/' . urlencode($key));
-
-        if (!is_string($result)) {
-            throw new Exception('Bad key/value pair');
-        }
-
-        return $result;
     }
 }

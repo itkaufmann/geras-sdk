@@ -14,63 +14,54 @@ class MessagePacker
 {
     private SignatureHelper $signatureHelper;
     private JsonMapper $jsonMapper;
-    private int $verifyMaxTimeOffset;
 
-    public function __construct(SignatureHelper $signatureHelper, JsonMapper $jsonMapper, int $verifyMaxTimeOffset = 7)
+    public function __construct(SignatureHelper $signatureHelper, JsonMapper $jsonMapper)
     {
         $this->signatureHelper = $signatureHelper;
         $this->jsonMapper = $jsonMapper;
-        $this->verifyMaxTimeOffset = $verifyMaxTimeOffset;
     }
 
-    public function pack(Message $message): string
+    public function pack(string $raw): string
     {
-        $json = json_encode($message, JSON_THROW_ON_ERROR);
+        $json = json_encode($raw, JSON_THROW_ON_ERROR);
         return $this->signatureHelper->sign($json);
     }
 
-    public function unpack(string $packed): Message
+    public function unpack(string $packed): string
     {
         $json = $this->signatureHelper->verify($packed);
-        $o = json_decode($json, false, 4, JSON_THROW_ON_ERROR);
-        return $this->jsonMapper->map($o, new Message());
+        return json_decode($json, false, 4, JSON_THROW_ON_ERROR);
     }
 
-    public function packData($data): string
+    public function packData($raw): string
     {
-        $message = new Message();
-        $message->timestamp = time();
-        $message->data = $data;
-
-        return $this->pack($message);
+        return $this->pack($raw);
     }
 
     public function unpackData(string $packed)
     {
-        $now = time();
-
-        $o = $this->unpack($packed);
-
-        // verify timestamp
-        $delta = $now - $o->timestamp;
-        if ($delta > $this->verifyMaxTimeOffset)
-            throw new MessageExpiredException($o->timestamp, $now);
-        elseif ($delta < (-1 * $this->verifyMaxTimeOffset))
-            throw new MessageNotValidYetException($o->timestamp, $now);
-
-        return $o->data;
+        return $this->unpack($packed);
     }
 
     /** @return mixed */
     public function unpackDataAs(string $packed, string $class): object
     {
         $data = $this->unpackData($packed);
+
+        if (!is_object($data)) {
+            throw new BadMessageException('Object expected, but data is ' . gettype($data));
+        }
+
         return $this->jsonMapper->map($data, new $class());
     }
 
     public function unpackDataAsArrayOf(string $packed, string $class): array
     {
         $data = $this->unpackData($packed);
+
+        if (!is_array($data)) {
+            throw new BadMessageException('Array expected, but data is ' . gettype($data));
+        }
         return $this->jsonMapper->mapArray($data, [], $class);
     }
 }
