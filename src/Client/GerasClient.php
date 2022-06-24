@@ -21,12 +21,6 @@ class GerasClient
         $this->messagePacker = $messagePacker;
     }
 
-    private function getUnpacked(string $uri)
-    {
-        $data = $this->client->get($uri);
-        return $this->messagePacker->unpackData($data);
-    }
-
     private function getUnpackedAs(string $uri, string $class)
     {
         $data = $this->client->get($uri);
@@ -43,12 +37,6 @@ class GerasClient
     {
         $rsData = $this->client->post($uri, $this->messagePacker->packData($rqData));
         return $this->messagePacker->unpackDataAs($rsData, $rsClass);
-    }
-
-    private function postPacked(string $uri, $rqData)
-    {
-        $rsData = $this->client->post($uri, $this->messagePacker->packData($rqData));
-        return $this->messagePacker->unpackData($rsData);
     }
 
     // ----
