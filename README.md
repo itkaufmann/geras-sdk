@@ -10,6 +10,8 @@ Install via Composer: `composer require itkfm/geras-sdk`
 ```php
 // Server URL
 $gerasServerApiUrl = 'https://geras.test/api/';
+// Application ID (as registered on the server)
+$gerasApplicationID = '';
 
 // Configure app keys
 $mySecretKey = '';
@@ -19,7 +21,7 @@ $signatureHelper = new SignatureHelper($mySecretKey, $gerasServerPublicKey);
 // Choose your API Client implementation
 // `HttpApiClient` (built upon Guzzle) is provided out of the box
 // You can also implement your own one, see `ApiClientInterface`
-$transportLayer = new HttpApiClient($gerasServerApiUrl);
+$transportLayer = new HttpApiClient($gerasServerApiUrl, $gerasApplicationID);
 
 // Setup dependencies
 $jsonMapper = new JsonMapper();
