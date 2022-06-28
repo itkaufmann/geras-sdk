@@ -7,5 +7,5 @@ namespace ITKFM\Geras\SDK\Entity;
 class SessionTicket
 {
     public string $loginURL;
-    public string $sessionID;
+    public int $sessionID;
 }
