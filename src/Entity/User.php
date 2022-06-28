@@ -9,6 +9,8 @@ class User
     public int $id;
 
     public string $username;
+    /** @var string[] */
+    public array $groups;
 
     public string $email;
 
