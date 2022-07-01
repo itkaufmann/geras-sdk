@@ -9,9 +9,9 @@ Install via Composer: `composer require itkfm/geras-sdk`
 
 ```php
 // Server URL
-$gerasServerApiUrl = 'https://geras.test/api/';
+$gerasServerApiUrl = 'https://geras.test/api';
 // Application ID (as registered on the server)
-$gerasApplicationID = '';
+$gerasApplicationID = 1234;
 
 // Configure app keys
 $mySecretKey = '';

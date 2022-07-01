@@ -6,9 +6,6 @@ namespace ITKFM\Geras\SDK\Client;
 
 interface ApiClientInterface
 {
-    /** @var string Name of HTTP header containing the application ID */
-    const HTTP_HEADER_APP_ID = 'X-GERAS-AppID';
-
     /**
      * @throws NotFoundException
      * @throws ApiException

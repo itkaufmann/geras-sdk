@@ -13,7 +13,7 @@ class HttpApiClient implements ApiClientInterface
 
     public function __construct(string $gerasApiBaseURL, int $applicationID, array $guzzleHttpConfig = [])
     {
-        $guzzleHttpConfig['base_uri'] = $gerasApiBaseURL;
+        $guzzleHttpConfig['base_uri'] = $gerasApiBaseURL . '/apps/' . $applicationID . '/';
         $guzzleHttpConfig['http_errors'] = false;
         $this->http = new Client($guzzleHttpConfig);
         $this->applicationID = $applicationID;
@@ -21,9 +21,7 @@ class HttpApiClient implements ApiClientInterface
 
     public function get(string $uri): string
     {
-        $response = $this->http->get($uri, [
-            'headers' => [self::HTTP_HEADER_APP_ID => $this->applicationID,],
-        ]);
+        $response = $this->http->get($uri);
 
         if ($response->getStatusCode() !== 200) {
             throw ($response->getStatusCode() === 404)
@@ -37,7 +35,6 @@ class HttpApiClient implements ApiClientInterface
     public function post(string $uri, $data): string
     {
         $response = $this->http->post($uri, [
-            'headers' => [self::HTTP_HEADER_APP_ID => $this->applicationID,],
             'body' => $data,
         ]);
 
