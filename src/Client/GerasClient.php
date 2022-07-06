@@ -42,10 +42,12 @@ class GerasClient
         }
 
         foreach ($unpacked as $idx => $string) {
-            if (is_string($string)) {
+            if (!is_string($string)) {
                 throw new BadResponseException('Response array contains unexpected non-string element');
             }
         }
+
+        return $unpacked;
     }
 
     private function postPackedUnpackAs(string $uri, $rqData, string $rsClass)
