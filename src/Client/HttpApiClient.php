@@ -26,7 +26,7 @@ class HttpApiClient implements ApiClientInterface
         if ($response->getStatusCode() !== 200) {
             throw ($response->getStatusCode() === 404)
                 ? new NotFoundException()
-                : new ApiException(null, $response->getStatusCode());
+                : new ApiException('Request failed', $response->getStatusCode());
         }
 
         return (string)$response->getBody();
@@ -39,9 +39,17 @@ class HttpApiClient implements ApiClientInterface
         ]);
 
         if (($response->getStatusCode() > 204) || ($response->getStatusCode() < 200)) {
-            throw new ApiException(null, $response->getStatusCode());
+            throw new ApiException('Request failed: ' . (string)$response->getBody(), $response->getStatusCode());
         }
 
         return (string)$response->getBody();
+    }
+
+    /**
+     * @return int
+     */
+    public function getApplicationID(): int
+    {
+        return $this->applicationID;
     }
 }

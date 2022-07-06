@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace ITKFM\Geras\SDK\Client;
 
 use ITKFM\Geras\SDK\Client\ApiClientInterface as ApiClient;
-use ITKFM\Geras\SDK\Entity\Group;
 use ITKFM\Geras\SDK\Entity\SessionTicket;
 use ITKFM\Geras\SDK\Entity\User;
 use ITKFM\Geras\SDK\Message\MessagePacker;
@@ -24,19 +23,35 @@ class GerasClient
     private function getUnpackedAs(string $uri, string $class)
     {
         $data = $this->client->get($uri);
-        return $this->messagePacker->unpackDataAs($data, $class);
+        return $this->messagePacker->unpackAs($data, $class);
     }
 
     private function getUnpackedAsArrayOf(string $uri, string $class): array
     {
         $data = $this->client->get($uri);
-        return $this->messagePacker->unpackDataAsArrayOf($data, $class);
+        return $this->messagePacker->unpackAsArrayOf($data, $class);
+    }
+
+    private function getUnpackedAsArrayOfStrings(string $uri): array
+    {
+        $data = $this->client->get($uri);
+        $unpacked = $this->messagePacker->unpack($data);
+
+        if (!is_array($unpacked)) {
+            throw new BadResponseException('Response data is not an array');
+        }
+
+        foreach ($unpacked as $idx => $string) {
+            if (is_string($string)) {
+                throw new BadResponseException('Response array contains unexpected non-string element');
+            }
+        }
     }
 
     private function postPackedUnpackAs(string $uri, $rqData, string $rsClass)
     {
-        $rsData = $this->client->post($uri, $this->messagePacker->packData($rqData));
-        return $this->messagePacker->unpackDataAs($rsData, $rsClass);
+        $rsData = $this->client->post($uri, $this->messagePacker->pack($rqData));
+        return $this->messagePacker->unpackAs($rsData, $rsClass);
     }
 
     // ----
@@ -52,32 +67,27 @@ class GerasClient
         return $this->getUnpackedAs('users/' . $id, User::class);
     }
 
-    /** @return Group[] */
+    /** @return string[] */
     public function getGroups(): array
     {
-        return $this->getUnpackedAsArrayOf('groups', Group::class);
-    }
-
-    public function getGroup(int $id): Group
-    {
-        return $this->getUnpackedAs('groups/' . $id, Group::class);
+        return $this->getUnpackedAsArrayOfStrings('groups');
     }
 
     /** @return User[] */
-    public function getUsersByGroup(int $groupID): array
+    public function getUsersByGroup(string $group): array
     {
-        return $this->getUnpackedAsArrayOf('groups/' . $groupID . '/users', User::class);
+        return $this->getUnpackedAsArrayOf('groups/' . urlencode($group) . '/users', User::class);
     }
 
-    /** @return Group[] */
+    /** @return string[] */
     public function getGroupsOfUser(int $userID): array
     {
-        return $this->getUnpackedAsArrayOf('users/' . $userID . 'groups', Group::class);
+        return $this->getUnpackedAsArrayOfStrings('users/' . $userID . '/groups');
     }
 
-    public function issueTicket(): Group
+    public function issueTicket(): string
     {
-        return $this->postPackedUnpackAs('ticket', null, SessionTicket::class);
+        return $this->postPackedUnpackAs('tickets', null, SessionTicket::class);
     }
 
     /**
@@ -86,7 +96,7 @@ class GerasClient
     public function sessionGetUser(string $sessionID): User
     {
         try {
-            return $this->getUnpackedAs('session/' . $sessionID . '/user', User::class);
+            return $this->getUnpackedAs('sessions/' . $sessionID . '/user', User::class);
         } catch (NotFoundException $ex) {
             throw new UnauthorizedSessionException($sessionID);
         }

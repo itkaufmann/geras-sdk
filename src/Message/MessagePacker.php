@@ -21,32 +21,22 @@ class MessagePacker
         $this->jsonMapper = $jsonMapper;
     }
 
-    public function pack(string $raw): string
+    public function pack($raw): string
     {
         $json = json_encode($raw, JSON_THROW_ON_ERROR);
         return $this->signatureHelper->sign($json);
     }
 
-    public function unpack(string $packed): string
+    public function unpack(string $packed)
     {
         $json = $this->signatureHelper->verify($packed);
         return json_decode($json, false, 4, JSON_THROW_ON_ERROR);
     }
 
-    public function packData($raw): string
-    {
-        return $this->pack($raw);
-    }
-
-    public function unpackData(string $packed)
-    {
-        return $this->unpack($packed);
-    }
-
     /** @return mixed */
-    public function unpackDataAs(string $packed, string $class): object
+    public function unpackAs(string $packed, string $class): object
     {
-        $data = $this->unpackData($packed);
+        $data = $this->unpack($packed);
 
         if (!is_object($data)) {
             throw new BadMessageException('Object expected, but data is ' . gettype($data));
@@ -55,13 +45,14 @@ class MessagePacker
         return $this->jsonMapper->map($data, new $class());
     }
 
-    public function unpackDataAsArrayOf(string $packed, string $class): array
+    public function unpackAsArrayOf(string $packed, string $class): array
     {
-        $data = $this->unpackData($packed);
+        $data = $this->unpack($packed);
 
         if (!is_array($data)) {
             throw new BadMessageException('Array expected, but data is ' . gettype($data));
         }
+
         return $this->jsonMapper->mapArray($data, [], $class);
     }
 }
