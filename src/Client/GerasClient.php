@@ -87,7 +87,7 @@ class GerasClient
         return $this->getUnpackedAsArrayOfStrings('users/' . $userID . '/groups');
     }
 
-    public function issueTicket(): string
+    public function issueTicket(): SessionTicket
     {
         return $this->postPackedUnpackAs('tickets', null, SessionTicket::class);
     }
