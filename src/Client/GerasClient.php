@@ -22,19 +22,19 @@ class GerasClient
 
     private function getUnpackedAs(string $uri, string $class)
     {
-        $data = $this->client->get($uri);
+        $data = $this->client->get($uri, $this->messagePacker->pack(null));
         return $this->messagePacker->unpackAs($data, $class);
     }
 
     private function getUnpackedAsArrayOf(string $uri, string $class): array
     {
-        $data = $this->client->get($uri);
+        $data = $this->client->get($uri, $this->messagePacker->pack(null));
         return $this->messagePacker->unpackAsArrayOf($data, $class);
     }
 
     private function getUnpackedAsArrayOfStrings(string $uri): array
     {
-        $data = $this->client->get($uri);
+        $data = $this->client->get($uri, $this->messagePacker->pack(null));
         $unpacked = $this->messagePacker->unpack($data);
 
         if (!is_array($unpacked)) {

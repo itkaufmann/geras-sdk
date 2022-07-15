@@ -19,9 +19,11 @@ class HttpApiClient implements ApiClientInterface
         $this->applicationID = $applicationID;
     }
 
-    public function get(string $uri): string
+    public function get(string $uri, $data): string
     {
-        $response = $this->http->get($uri);
+        $response = $this->http->get($uri, [
+            'body' => $data,
+        ]);
 
         if ($response->getStatusCode() !== 200) {
             throw ($response->getStatusCode() === 404)

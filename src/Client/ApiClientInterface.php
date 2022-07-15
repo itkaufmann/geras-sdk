@@ -10,7 +10,7 @@ interface ApiClientInterface
      * @throws NotFoundException
      * @throws ApiException
      */
-    function get(string $uri): string;
+    function get(string $uri, string $data): string;
 
     /**
      * @throws ApiException
