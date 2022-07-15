@@ -6,15 +6,15 @@ namespace ITKFM\Geras\SDK\Client;
 
 class UnauthorizedSessionException extends ApiException
 {
-    private string $sessionID;
+    private int $sessionID;
 
-    public function __construct(string $sessionID)
+    public function __construct(int $sessionID)
     {
         $this->sessionID = $sessionID;
         parent::__construct('No active session for this ticket yet. User has to login first.');
     }
 
-    public function getSessionID(): string
+    public function getSessionID(): int
     {
         return $this->sessionID;
     }

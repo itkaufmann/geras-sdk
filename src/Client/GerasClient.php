@@ -95,7 +95,7 @@ class GerasClient
     /**
      * @throws UnauthorizedSessionException
      */
-    public function sessionGetUser(string $sessionID): User
+    public function sessionGetUser(int $sessionID): User
     {
         try {
             return $this->getUnpackedAs('sessions/' . $sessionID . '/user', User::class);
