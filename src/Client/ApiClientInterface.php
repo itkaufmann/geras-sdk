@@ -16,4 +16,9 @@ interface ApiClientInterface
      * @throws ApiException
      */
     function post(string $uri, string $data): string;
+
+    /**
+     * @throws ApiException
+     */
+    function delete(string $uri, string $data): string;
 }

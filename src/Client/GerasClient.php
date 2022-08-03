@@ -56,6 +56,12 @@ class GerasClient
         return $this->messagePacker->unpackAs($rsData, $rsClass);
     }
 
+    private function delete(string $uri)
+    {
+        $data = $this->client->delete($uri, $this->messagePacker->pack(null));
+        return $this->messagePacker->unpack($data);
+    }
+
     // ----
 
     /** @return User[] */
@@ -102,5 +108,10 @@ class GerasClient
         } catch (NotFoundException $ex) {
             throw new UnauthorizedSessionException($sessionID);
         }
+    }
+
+    public function sessionDestroy(int $sessionID): string
+    {
+        return $this->delete('sessions/' . $sessionID);
     }
 }

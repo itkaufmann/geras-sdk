@@ -47,6 +47,17 @@ class HttpApiClient implements ApiClientInterface
         return (string)$response->getBody();
     }
 
+    public function delete(string $uri, $data): string
+    {
+        $response = $this->http->delete($uri, [
+            'body' => $data,
+        ]);
+
+        if (($response->getStatusCode() > 204) || ($response->getStatusCode() < 200)) {
+            throw new ApiException('Request failed: ' . (string)$response->getBody(), $response->getStatusCode());
+        }
+    }
+
     /**
      * @return int
      */
