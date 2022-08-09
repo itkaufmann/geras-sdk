@@ -56,6 +56,8 @@ class HttpApiClient implements ApiClientInterface
         if (($response->getStatusCode() > 204) || ($response->getStatusCode() < 200)) {
             throw new ApiException('Request failed: ' . (string)$response->getBody(), $response->getStatusCode());
         }
+
+        return (string)$response->getBody();
     }
 
     /**
