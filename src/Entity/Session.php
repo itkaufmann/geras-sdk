@@ -7,7 +7,7 @@ namespace ITKFM\Geras\SDK\Entity;
 class Session
 {
     public int $sessionID;
-    public ?User $user;
-    public ?string $loginURL;
+    public ?User $user = null;
+    public ?string $loginURL = null;
     public int $validUntil;
 }

@@ -13,6 +13,6 @@ class User
     /** @var string[] */
     public array $groups;
 
-    public ?string $firstname;
-    public ?string $lastname;
+    public ?string $firstname = null;
+    public ?string $lastname = null;
 }
