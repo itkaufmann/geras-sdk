@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace ITKFM\Geras\SDK\Client;
 
 use ITKFM\Geras\SDK\Client\ApiClientInterface as ApiClient;
-use ITKFM\Geras\SDK\Entity\SessionTicket;
+use ITKFM\Geras\SDK\Entity\Session;
 use ITKFM\Geras\SDK\Entity\User;
 use ITKFM\Geras\SDK\Message\MessagePacker;
 
@@ -93,9 +93,14 @@ class GerasClient
         return $this->getUnpackedAsArrayOfStrings('users/' . $userID . '/groups');
     }
 
-    public function issueTicket(): SessionTicket
+    public function issueSessionTicket(): Session
     {
-        return $this->postPackedUnpackAs('tickets', null, SessionTicket::class);
+        return $this->postPackedUnpackAs('sessions', null, Session::class);
+    }
+
+    public function sessionGet(int $sessionID): Session
+    {
+        return $this->getUnpackedAs('sessions/' . $sessionID, Session::class);
     }
 
     /**

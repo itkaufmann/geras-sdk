@@ -4,8 +4,10 @@ declare(strict_types=1);
 
 namespace ITKFM\Geras\SDK\Entity;
 
-class SessionTicket
+class Session
 {
-    public string $loginURL;
     public int $sessionID;
+    public ?User $user;
+    public ?string $loginURL;
+    public int $validUntil;
 }
