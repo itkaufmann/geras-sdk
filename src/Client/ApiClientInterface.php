@@ -7,18 +7,17 @@ namespace ITKFM\Geras\SDK\Client;
 interface ApiClientInterface
 {
     /**
-     * @throws NotFoundException
      * @throws ApiException
      */
-    function get(string $uri, string $data): string;
+    function get(string $uri): string;
 
     /**
      * @throws ApiException
      */
-    function post(string $uri, string $data): string;
+    function post(string $uri, ?string $data): ?string;
 
     /**
      * @throws ApiException
      */
-    function delete(string $uri, string $data): string;
+    function delete(string $uri): void;
 }

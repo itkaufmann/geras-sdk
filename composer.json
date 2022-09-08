@@ -15,8 +15,9 @@
   "require": {
     "php": "^7.4",
     "ext-json": "*",
-    "ext-sodium": "*",
-    "guzzlehttp/guzzle": "^7.0",
     "netresearch/jsonmapper": "^4.0"
+  },
+  "suggest": {
+    "guzzlehttp/guzzle": "^7.0"
   }
 }

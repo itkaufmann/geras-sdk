@@ -7,8 +7,11 @@ namespace ITKFM\Geras\SDK\Client;
 use ITKFM\Geras\SDK\Client\ApiClientInterface as ApiClient;
 use ITKFM\Geras\SDK\Entity\Session;
 use ITKFM\Geras\SDK\Entity\User;
-use ITKFM\Geras\SDK\Message\MessagePacker;
+use JsonException;
 
+/**
+ * G.E.R.A.S. client
+ */
 class GerasClient
 {
     private ApiClient $client;
@@ -20,103 +23,116 @@ class GerasClient
         $this->messagePacker = $messagePacker;
     }
 
-    private function getUnpackedAs(string $uri, string $class)
+    /**
+     * @return mixed
+     * @throws ApiException
+     */
+    private function getUnpackedAs(string $uri, string $class): object
     {
-        $data = $this->client->get($uri, $this->messagePacker->pack(null));
+        $data = $this->client->get($uri);
         return $this->messagePacker->unpackAs($data, $class);
     }
 
+    /**
+     * @throws ApiException
+     */
     private function getUnpackedAsArrayOf(string $uri, string $class): array
     {
-        $data = $this->client->get($uri, $this->messagePacker->pack(null));
+        $data = $this->client->get($uri);
         return $this->messagePacker->unpackAsArrayOf($data, $class);
     }
 
+    /**
+     * @return string[]
+     * @throws ApiException
+     */
     private function getUnpackedAsArrayOfStrings(string $uri): array
     {
-        $data = $this->client->get($uri, $this->messagePacker->pack(null));
-        $unpacked = $this->messagePacker->unpack($data);
-
-        if (!is_array($unpacked)) {
-            throw new BadResponseException('Response data is not an array');
-        }
-
-        foreach ($unpacked as $idx => $string) {
-            if (!is_string($string)) {
-                throw new BadResponseException('Response array contains unexpected non-string element');
-            }
-        }
-
-        return $unpacked;
+        $data = $this->client->get($uri);
+        return $this->messagePacker->unpackAsArrayOfStrings($data);
     }
 
-    private function postPackedUnpackAs(string $uri, $rqData, string $rsClass)
+    /**
+     * @return mixed
+     * @throws ApiException
+     * @throws JsonException
+     */
+    private function postUnpackedAs(string $uri, $requestData, string $responseClass): object
     {
-        $rsData = $this->client->post($uri, $this->messagePacker->pack($rqData));
-        return $this->messagePacker->unpackAs($rsData, $rsClass);
-    }
-
-    private function delete(string $uri)
-    {
-        $data = $this->client->delete($uri, $this->messagePacker->pack(null));
-        return $this->messagePacker->unpack($data);
+        $rsData = $this->client->post($uri, $this->messagePacker->pack($requestData));
+        return $this->messagePacker->unpackAs($rsData, $responseClass);
     }
 
     // ----
 
-    /** @return User[] */
+    /**
+     * @return User[]
+     * @throws ApiException
+     */
     public function getAllUsers(): array
     {
         return $this->getUnpackedAsArrayOf('users', User::class);
     }
 
+    /**
+     * @throws ApiException
+     */
     public function getUser(int $id): User
     {
         return $this->getUnpackedAs('users/' . $id, User::class);
     }
 
-    /** @return string[] */
+    /**
+     * @return string[]
+     * @throws ApiException
+     */
     public function getGroups(): array
     {
         return $this->getUnpackedAsArrayOfStrings('groups');
     }
 
-    /** @return User[] */
+    /**
+     * @return User[]
+     * @throws ApiException
+     */
     public function getUsersByGroup(string $group): array
     {
         return $this->getUnpackedAsArrayOf('groups/' . urlencode($group) . '/users', User::class);
     }
 
-    /** @return string[] */
+    /**
+     * @return string[]
+     * @throws ApiException
+     */
     public function getGroupsOfUser(int $userID): array
     {
         return $this->getUnpackedAsArrayOfStrings('users/' . $userID . '/groups');
     }
 
+    // -- session
+
+    /**
+     * @throws ApiException
+     * @throws JsonException
+     */
     public function issueSessionTicket(): Session
     {
-        return $this->postPackedUnpackAs('sessions', null, Session::class);
+        return $this->postUnpackedAs('sessions', null, Session::class);
     }
 
-    public function sessionGet(int $sessionID): Session
+    /**
+     * @throws ApiException
+     */
+    public function sessionGetInfo(int $sessionID): Session
     {
         return $this->getUnpackedAs('sessions/' . $sessionID, Session::class);
     }
 
     /**
-     * @throws UnauthorizedSessionException
+     * @throws ApiException
      */
-    public function sessionGetUser(int $sessionID): User
+    public function sessionDestroy(int $sessionID): void
     {
-        try {
-            return $this->getUnpackedAs('sessions/' . $sessionID . '/user', User::class);
-        } catch (NotFoundException $ex) {
-            throw new UnauthorizedSessionException($sessionID);
-        }
-    }
-
-    public function sessionDestroy(int $sessionID): string
-    {
-        return $this->delete('sessions/' . $sessionID);
+        $this->client->delete('sessions/' . $sessionID);
     }
 }
