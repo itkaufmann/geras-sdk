@@ -19,12 +19,7 @@ final class ApiKey
     {
         $this->gerasApiBaseUrl = $gerasApiBaseUrl;
         $this->appID = $appID;
-
-        $secret = base64_decode($secretBase64Encoded);
-        if ($secret === false) {
-            throw new Exception('Bad API key format: not base64_decode\'able');
-        }
-        $this->secret = $secret;
+        $this->secret = sodium_base642bin($secretBase64Encoded, SODIUM_BASE64_VARIANT_ORIGINAL);
     }
 
     public function getGerasApiBaseUrl(): string

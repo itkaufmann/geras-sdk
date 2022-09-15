@@ -15,6 +15,7 @@
   "require": {
     "php": "^7.4",
     "ext-json": "*",
+    "ext-sodium": "*",
     "netresearch/jsonmapper": "^4.0"
   },
   "suggest": {
