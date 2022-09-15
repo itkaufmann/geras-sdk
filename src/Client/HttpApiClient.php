@@ -85,7 +85,7 @@ class HttpApiClient implements ApiClientInterface
         return array_merge(
             [
                 'auth' => [(string)$this->apiKey->getAppID(), base64_decode($this->apiKey->getSecret())],
-                'base_uri' => $this->apiKey->getGerasApiBaseUrl(),
+                'base_uri' => $this->apiKey->getGerasApiBaseUrl() . '/apps/' . $this->apiKey->getAppID() . '/',
                 'http_errors' => false,
             ],
             $options
