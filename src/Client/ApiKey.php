@@ -15,14 +15,14 @@ final class ApiKey
     /**
      * @throws Exception
      */
-    public function __construct(string $gerasApiBaseUrl, int $appID, string $secretEncoded)
+    public function __construct(string $gerasApiBaseUrl, int $appID, string $secretBase64Encoded)
     {
         $this->gerasApiBaseUrl = $gerasApiBaseUrl;
         $this->appID = $appID;
 
-        $secret = base64_decode($secretEncoded);
+        $secret = base64_decode($secretBase64Encoded);
         if ($secret === false) {
-            throw new Exception('Bad API key format: not in base64_deocde\'able');
+            throw new Exception('Bad API key format: not base64_decode\'able');
         }
         $this->secret = $secret;
     }

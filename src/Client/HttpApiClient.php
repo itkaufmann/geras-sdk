@@ -72,9 +72,6 @@ class HttpApiClient implements ApiClientInterface
         }
     }
 
-    /**
-     * @return int
-     */
     public function getApplicationID(): int
     {
         return $this->apiKey->getAppID();
@@ -84,7 +81,7 @@ class HttpApiClient implements ApiClientInterface
     {
         return array_merge(
             [
-                'auth' => [(string)$this->apiKey->getAppID(), base64_decode($this->apiKey->getSecret())],
+                'auth' => [(string)$this->apiKey->getAppID(), $this->apiKey->getSecret()],
                 'base_uri' => $this->apiKey->getGerasApiBaseUrl() . '/apps/' . $this->apiKey->getAppID() . '/',
                 'http_errors' => false,
             ],

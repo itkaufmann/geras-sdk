@@ -8,6 +8,6 @@ class NotFoundException extends ApiException
 {
     public function __construct(?string $apiResponse = null)
     {
-        parent::__construct($apiResponse, 'Not found', 404);
+        parent::__construct('Not found', $apiResponse, 404);
     }
 }
