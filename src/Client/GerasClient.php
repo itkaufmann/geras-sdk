@@ -135,4 +135,38 @@ class GerasClient
     {
         $this->client->delete('sessions/' . $sessionID);
     }
+
+    // -- token auth
+
+    /**
+     * @throws ApiException
+     * @throws BadResponseException
+     */
+    public function tokenCreateUrlForUser(): string
+    {
+        $data = $this->client->get('token/create-url');
+        return $this->messagePacker->unpack($data);
+    }
+
+    /**
+     * @throws ApiException
+     */
+    public function tokenValidate(string $tokenName, string $tokenSecret): User
+    {
+        return $this->getUnpackedAs(
+            'token/' . rawurlencode($tokenName) . '/user',
+            User::class,
+            [
+                'secret' => $tokenSecret,
+            ]
+        );
+    }
+
+    /**
+     * @throws ApiException
+     */
+    public function tokenInvalidate(int $tokenName): void
+    {
+        $this->client->delete('token/' . $tokenName);
+    }
 }
