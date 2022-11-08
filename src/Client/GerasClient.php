@@ -161,12 +161,4 @@ class GerasClient
             ]
         );
     }
-
-    /**
-     * @throws ApiException
-     */
-    public function tokenInvalidate(int $tokenName): void
-    {
-        $this->client->delete('tokens/' . $tokenName);
-    }
 }
