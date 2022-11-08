@@ -144,7 +144,7 @@ class GerasClient
      */
     public function tokenCreateUrlForUser(): string
     {
-        $data = $this->client->get('token/create-url');
+        $data = $this->client->get('tokens/create-url');
         return $this->messagePacker->unpack($data);
     }
 
@@ -154,7 +154,7 @@ class GerasClient
     public function tokenValidate(string $tokenName, string $tokenSecret): User
     {
         return $this->getUnpackedAs(
-            'token/' . rawurlencode($tokenName) . '/user',
+            'tokens/' . rawurlencode($tokenName) . '/user',
             User::class,
             [
                 'secret' => $tokenSecret,
@@ -167,6 +167,6 @@ class GerasClient
      */
     public function tokenInvalidate(int $tokenName): void
     {
-        $this->client->delete('token/' . $tokenName);
+        $this->client->delete('tokens/' . $tokenName);
     }
 }
