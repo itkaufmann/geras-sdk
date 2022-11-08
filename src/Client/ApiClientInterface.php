@@ -9,7 +9,7 @@ interface ApiClientInterface
     /**
      * @throws ApiException
      */
-    function get(string $uri): string;
+    function get(string $uri, array $queryParameters = []): string;
 
     /**
      * @throws ApiException

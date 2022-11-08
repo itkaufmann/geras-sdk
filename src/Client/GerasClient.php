@@ -27,9 +27,9 @@ class GerasClient
      * @return mixed
      * @throws ApiException
      */
-    private function getUnpackedAs(string $uri, string $class): object
+    private function getUnpackedAs(string $uri, string $class, array $queryParameters = []): object
     {
-        $data = $this->client->get($uri);
+        $data = $this->client->get($uri, $queryParameters);
         return $this->messagePacker->unpackAs($data, $class);
     }
 

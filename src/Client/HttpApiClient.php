@@ -20,9 +20,14 @@ class HttpApiClient implements ApiClientInterface
         $this->http = $http;
     }
 
-    public function get(string $uri): string
+    public function get(string $uri, array $queryParameters = []): string
     {
-        $response = $this->http->get($uri, $this->getRequestOptions());
+        $response = $this->http->get(
+            $uri,
+            $this->getRequestOptions([
+                'query' => $queryParameters,
+            ])
+        );
 
         if ($response->getStatusCode() !== 200) {
             throw ($response->getStatusCode() === 404)
