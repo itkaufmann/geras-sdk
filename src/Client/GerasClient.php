@@ -149,16 +149,25 @@ class GerasClient
     }
 
     /**
+     * @return User|null The User authenticated through the provided token or NULL if the token is not valid
      * @throws ApiException
      */
-    public function tokenValidate(string $tokenName, string $tokenSecret): User
+    public function tokenValidate(string $tokenName, string $tokenSecret): ?User
     {
-        return $this->getUnpackedAs(
-            'tokens/' . rawurlencode($tokenName) . '/user',
-            User::class,
-            [
-                'secret' => $tokenSecret,
-            ]
-        );
+        try {
+            return $this->getUnpackedAs(
+                'tokens/' . rawurlencode($tokenName) . '/user',
+                User::class,
+                [
+                    'secret' => $tokenSecret,
+                ]
+            );
+        } catch (NotFoundException $ex) {
+            if ($ex->getApiResponse() === 'Invalid App Token') {
+                return null;
+            }
+
+            throw $ex;
+        }
     }
 }
