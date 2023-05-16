@@ -120,6 +120,10 @@ class GerasClient
         return $this->postUnpackedAs('sessions?two-way-confirm=true', null, Session::class);
     }
 
+    /**
+     * @throws ApiException
+     * @throws JsonException
+     */
     public function sessionConfirm(int $sessionID, string $token): Session
     {
         return $this->postUnpackedAs(
