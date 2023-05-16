@@ -52,16 +52,18 @@ class HttpApiClient implements ApiClientInterface
         );
 
         if (($response->getStatusCode() > 204) || ($response->getStatusCode() < 200)) {
-            throw new ApiException(
-                'Error indicated by response status code',
-                (string)$response->getBody(),
-                $response->getStatusCode()
-            );
+            throw ($response->getStatusCode() === 404)
+                ? new NotFoundException()
+                : new ApiException(
+                    'Error indicated by response status code',
+                    (string)$response->getBody(),
+                    $response->getStatusCode()
+                );
         }
 
         return ($response->getBody()->eof())
             ? null
-            : (string )$response->getBody();
+            : (string)$response->getBody();
     }
 
     public function delete(string $uri): void
