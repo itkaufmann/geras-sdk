@@ -117,10 +117,10 @@ class GerasClient
      */
     public function issueSessionTicket(): Session
     {
-        return $this->postUnpackedAs('sessions?two-way-confirm=false', null, Session::class);
+        return $this->postUnpackedAs('sessions?two-way-confirm=true', null, Session::class);
     }
 
-    public function sessionSubmitTwoWayToken(int $sessionID, string $token): Session
+    public function sessionConfirm(int $sessionID, string $token): Session
     {
         return $this->postUnpackedAs(
             'sessions/' . $sessionID . '/two-way-confirm',
