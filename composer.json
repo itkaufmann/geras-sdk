@@ -13,7 +13,7 @@
     }
   },
   "require": {
-    "php": "^7.4",
+    "php": "^8.0|^7.4",
     "ext-json": "*",
     "ext-sodium": "*",
     "netresearch/jsonmapper": "^4.0"
