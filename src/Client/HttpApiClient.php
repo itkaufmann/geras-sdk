@@ -31,7 +31,7 @@ class HttpApiClient implements ApiClientInterface
 
         if ($response->getStatusCode() !== 200) {
             throw ($response->getStatusCode() === 404)
-                ? new NotFoundException()
+                ? new NotFoundException((string)$response->getBody())
                 : new ApiException(
                     'Error indicated by response status code',
                     (string)$response->getBody(),
@@ -53,7 +53,7 @@ class HttpApiClient implements ApiClientInterface
 
         if (($response->getStatusCode() > 204) || ($response->getStatusCode() < 200)) {
             throw ($response->getStatusCode() === 404)
-                ? new NotFoundException()
+                ? new NotFoundException((string)$response->getBody())
                 : new ApiException(
                     'Error indicated by response status code',
                     (string)$response->getBody(),
